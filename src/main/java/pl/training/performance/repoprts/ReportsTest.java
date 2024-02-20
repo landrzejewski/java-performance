@@ -14,17 +14,17 @@ import java.util.List;
 @State(Scope.Benchmark)
 public class ReportsTest {
 
-    private static final Path FILE_PATH = Path.of("5m Sales Records.csv");
+    private static final Path FILE_PATH = Path.of("sales.data");
 
     // cache
 
-    @Benchmark
+    //@Benchmark
     public ResultPage<DataEntry> dataLoad() {
         var dataProvider = new CsvDataProvider(FILE_PATH);
         return dataProvider.findAll(new PageSpec(0, 500_000));
     }
 
-    //@Benchmark
+    @Benchmark
     public List<ProductStats> dataLoadAndReporting() {
         var dataProvider = new CsvDataProvider(FILE_PATH);
         var reportGenerator = new ReportGenerator(dataProvider);

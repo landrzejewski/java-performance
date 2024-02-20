@@ -1,31 +1,69 @@
 package pl.training.performance.repoprts;
 
-import java.io.IOException;
+import lombok.SneakyThrows;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.RandomAccessFile;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static pl.training.performance.repoprts.OrderPriority.*;
 
 public class CsvDataProvider implements DataProvider {
+
+    private static final int START_POSITION = 0;
+    private static final byte EMPTY_VALUE = 0x0;
+    private static final int RECORD_SIZE = 200;
 
     private static final String FIELD_SEPARATOR = ",";
     private static final String ONLINE_MARKER = "Online";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy");
 
-    private final Path filePath;
-    private final double totalEntries;
+    private final RandomAccessFile randomAccessFile;
 
     public CsvDataProvider(Path filePath) {
-        this.filePath = filePath;
-        try (var lines = Files.lines(filePath)) {
-            totalEntries = lines.skip(1).count();
-        } catch (IOException ioException) {
+        try {
+            this.randomAccessFile = new RandomAccessFile(filePath.toFile(), "rw");
+        } catch (FileNotFoundException e) {
             throw new DataLoadingFailedException();
         }
+        /*try (var lines = Files.lines(filePath).skip(1)) {
+            this.randomAccessFile = new RandomAccessFile(new File("sales.data"), "rw");
+            lines.forEach(withCounter(this::write));
+        } catch (IOException e) {
+            throw new DataLoadingFailedException();
+        }*/
+    }
+
+    @SneakyThrows
+    private void write(long lineNo, String line) {
+        var buffer = ByteBuffer.allocate(RECORD_SIZE);
+        buffer.put(toField(line.trim().getBytes(), RECORD_SIZE));
+        var bytes = buffer.array();
+        randomAccessFile.seek(lineNo * RECORD_SIZE);
+        randomAccessFile.write(bytes);
+    }
+
+    public static <T> Consumer<T> withCounter(BiConsumer<Long, T> consumer) {
+        var counter = new AtomicLong(0);
+        return item -> consumer.accept(counter.getAndIncrement(), item);
+    }
+
+    private byte[] toField(byte[] data, int size) {
+        var bytes = new byte[size];
+        System.arraycopy(data, START_POSITION, bytes, START_POSITION, data.length);
+        Arrays.fill(bytes, data.length, size, EMPTY_VALUE);
+        return bytes;
     }
 
     private DataEntry toDataEntry(String row) {
@@ -53,26 +91,36 @@ public class CsvDataProvider implements DataProvider {
                 unitsSold, unitPrice, unitCost, totalRevenue, totalCost, totalProfit);
     }
 
+    @SneakyThrows
     @Override
     public ResultPage<DataEntry> findAll(PageSpec pageSpec) {
-        try {
-            Files.lines(filePath).skip(pageSpec.getOffset())
-                    .forEach(string -> System.out.println(string.getBytes(StandardCharsets.UTF_8).length));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        var rows = new ArrayList<DataEntry>(pageSpec.pageSize());
+        var offset = (long) pageSpec.getOffset() * RECORD_SIZE;
+        //var bytes = new byte[RECORD_SIZE * pageSpec.pageSize()];
+        var bytes = new byte[RECORD_SIZE];
+        for (int recordNo = 0; recordNo < pageSpec.pageSize(); recordNo++) {
+            randomAccessFile.seek(offset);
+            randomAccessFile.read(bytes);
+            var line = new String(bytes).trim();
+            if (line.isEmpty()) {
+                break;
+            }
+            var entry = toDataEntry(line);
+            rows.add(entry);
+            offset += RECORD_SIZE;
         }
-
-        try (var lines = Files.lines(filePath)) {
-            var rows = lines.skip(1)
-                    .skip(pageSpec.getOffset())
-                    .limit(pageSpec.pageSize())
-                    .map(this::toDataEntry)
-                    .toList();
-            var totalPages = (int) Math.ceil(totalEntries / pageSpec.pageSize());
-            return new ResultPage<>(rows, totalPages);
-        } catch (IOException ioException) {
-            throw new DataLoadingFailedException();
-        }
+       /* for (int recordNo = 0; recordNo < pageSpec.pageSize(); recordNo++) {
+            var recordOffset = RECORD_SIZE * recordNo;
+            var lineBytes = Arrays.copyOfRange(bytes, recordOffset, recordOffset + RECORD_SIZE);
+            var line = new String(lineBytes).trim();
+            if (line.isEmpty()) {
+                break;
+            }
+            var entry = toDataEntry(line);
+            rows.add(entry);
+        }*/
+        var totalPages = (int) Math.ceil((double) randomAccessFile.length() / pageSpec.pageSize());
+        return new ResultPage<>(rows, totalPages);
     }
 
 }
