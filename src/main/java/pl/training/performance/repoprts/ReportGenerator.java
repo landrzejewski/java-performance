@@ -6,11 +6,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.reducing;
 
 public class ReportGenerator {
 
-    private static final int PAGE_SIZE = 50;
+    private static final int PAGE_SIZE = 500_000;
 
     private final DataProvider provider;
 
@@ -38,7 +39,7 @@ public class ReportGenerator {
     }
 
     private Map<String, BigDecimal> process(ResultPage<DataEntry> entries, int year) {
-        return  entries.getRows()
+        return entries.getRows()
                 .stream()
                 .filter(dataEntry -> dataEntry.orderDate().getYear() == year)
                 .collect(Collectors.groupingBy(DataEntry::itemType, mapping(DataEntry::totalProfit, reducing(ZERO, BigDecimal::add))));
