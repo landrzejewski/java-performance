@@ -46,5 +46,3 @@ public class Person implements Serializable /*Externalizable*/ {
 
 }
 
-// Standard Serializable  217 B
-// Custom Externalizable  127

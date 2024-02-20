@@ -55,6 +55,7 @@ public class IO {
         }
     }
 
+    // Buforowanie nie powinno być stosowane bezpośrednio na ByteArrayInput/OutpuStream - powoduje podwójne kopiowanie danych
     //@Benchmark
     public void copyWithBufferedStreams() throws IOException {
         try (InputStream inputStream = Files.newInputStream(INPUT_PATH);

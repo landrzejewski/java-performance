@@ -2,6 +2,8 @@ package pl.training.performance.serialization;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class SerializationTest {
 
@@ -9,7 +11,8 @@ public class SerializationTest {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(OUTPUT_FILE);
-             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
+             GZIPOutputStream gzipOutputStream = new GZIPOutputStream(fileOutputStream);
+             ObjectOutputStream objectOutputStream = new ObjectOutputStream(gzipOutputStream)) {
             var person = Person.builder()
                     .firstName("Jan")
                     .lastName("Kowalski")
@@ -21,10 +24,14 @@ public class SerializationTest {
         }
 
         try (FileInputStream fileInputStream = new FileInputStream(OUTPUT_FILE);
-             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+             GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
+             ObjectInputStream objectInputStream = new ObjectInputStream(gzipInputStream)) {
             var person = (Person) objectInputStream.readObject();
             System.out.println(person);
         }
+
+        // Standard Serializable  217 B
+        // Custom Externalizable  127
     }
 
 }
