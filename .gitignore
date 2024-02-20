@@ -35,5 +35,4 @@ build/
 .DS_Store
 
 /5m Sales Records.csv
-/random.data
-/random-copy.data
+/*.data
