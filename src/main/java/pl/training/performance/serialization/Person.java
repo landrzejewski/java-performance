@@ -1,17 +1,18 @@
 package pl.training.performance.serialization;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.*;
 import java.time.LocalDate;
 
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class Person implements /*Serializable*/ Externalizable {
+public class Person implements Serializable /*Externalizable*/ {
 
     private String firstName;
     private String lastName;
@@ -19,8 +20,7 @@ public class Person implements /*Serializable*/ Externalizable {
     private transient boolean hasAccount;
     private LocalDate birthDate;
 
-
-    @Override
+    /*@Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeUTF(firstName);
         out.writeUTF(lastName);
@@ -34,6 +34,17 @@ public class Person implements /*Serializable*/ Externalizable {
         lastName = in.readUTF();
         age = in.readInt();
         birthDate = (LocalDate) in.readObject();
+    }*/
+
+    /*private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
     }
 
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+    }*/
+
 }
+
+// Standard Serializable  217 B
+// Custom Externalizable  127
