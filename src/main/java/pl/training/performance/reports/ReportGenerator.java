@@ -1,5 +1,7 @@
 package pl.training.performance.reports;
 
+import pl.training.performance.reports.provider.DataProvider;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;

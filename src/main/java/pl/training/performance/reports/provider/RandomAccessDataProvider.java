@@ -10,12 +10,12 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import static java.util.Arrays.copyOfRange;
 import static pl.training.performance.reports.OrderPriority.*;
 
-public class RandomAccessDataProvider implements DataProvider {
-
+public class RandomAccessDataProvider implements DataProvider, AutoCloseable {
     /*private static final int START_POSITION = 0;
     private static final byte EMPTY_VALUE = 0x0;*/
     private static final int RECORD_SIZE = 200;
@@ -26,10 +26,11 @@ public class RandomAccessDataProvider implements DataProvider {
 
     private final RandomAccessFile randomAccessFile;
     private final long recordsCount;
+    private final Logger logger = Logger.getLogger(RandomAccessDataProvider.class.getSimpleName());
 
     public RandomAccessDataProvider(Path filePath) {
         try {
-            this.randomAccessFile = new RandomAccessFile(filePath.toFile(), "rw");
+            randomAccessFile = new RandomAccessFile(filePath.toFile(), "rw");
             recordsCount = randomAccessFile.length() / RECORD_SIZE;
         } catch (IOException e) {
             throw new DataLoadingFailedException();
@@ -120,6 +121,15 @@ public class RandomAccessDataProvider implements DataProvider {
 
         var totalPages = (int) Math.ceil((double) recordsCount / pageSpec.pageSize());
         return new ResultPage<>(rows, totalPages);
+    }
+
+    @Override
+    public void close() {
+        try {
+            randomAccessFile.close();
+        } catch (IOException e) {
+            logger.warning("Unable to close db file");
+        }
     }
 
 }

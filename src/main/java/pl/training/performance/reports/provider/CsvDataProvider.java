@@ -1,10 +1,12 @@
 package pl.training.performance.reports.provider;
 
-import pl.training.performance.reports.*;
+import pl.training.performance.reports.DataEntry;
+import pl.training.performance.reports.DataLoadingFailedException;
+import pl.training.performance.reports.PageSpec;
+import pl.training.performance.reports.ResultPage;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -57,13 +59,6 @@ public class CsvDataProvider implements DataProvider {
 
     @Override
     public ResultPage<DataEntry> findAll(PageSpec pageSpec) {
-        try {
-            Files.lines(filePath).skip(pageSpec.getOffset())
-                    .forEach(string -> System.out.println(string.getBytes(StandardCharsets.UTF_8).length));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
         try (var lines = Files.lines(filePath)) {
             var rows = lines.skip(1)
                     .skip(pageSpec.getOffset())
