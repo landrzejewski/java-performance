@@ -13,8 +13,9 @@ Wykorzystaj więdzę z zakresu wielowątkowości w celu dalszej optymalizacji dz
   - a) pule wątków
   - b) mechanizm fork join
   - c) zrównoleglanie strumieni
+  - d) RxJava
 - dodaj możliwość wstawiania nowych danych do pliku, wykorzystaj różne strategie synchronizacji w celu zapewnienia
-  odpowiedniej wydajności i bezpieczeństwa, wybierz najbardziej opłacalny wariant
+  odpowiedniej wydajności i bezpieczeństwa, wybierz najbardziej opłacalny wariant (monitor, blokady jawne)
 - dodaj raport dotyczący całkowitej sprzedaży oraz zaimplementuj cache optymalizujący odczyt poszczególnych stron
   z pliku, cache powinien być resetowany po zmianie danych
 
