@@ -8,10 +8,15 @@ W pierwszej iteracji aplikacja powinna umożliwiać wygenerowanie:
 - Rankingu produktów zależnego od uzyskanego profitu (pole Total Profit) w okresie wskazanego roku lub miesiąca 
 - Zestawienia całkowitej sprzedaży (pole Units Sold) danego produktu (pole Item Type) per region i kraj (pola Region i Country)
 
-Po wygenerowaniu raportu uzyskane dane powinny zostać zapisane w pliku, aplikacja powinna umożliwiać ich odczyt i wydrukowanie
-na konsoli, a także wyszukanie poniższych informacji:
-- Dane dotyczące uzyskanego profitu dla wskazanego produktu (pole Item Type) w okresie wskazanego roku lub miesiąca
-- Dane dotyczące ilości sprzedanych produktów (pole Units Sold) danego produktu (pole Item Type) w danym regionie lub kraju 
+Wykorzystaj więdzę z zakresu wielowątkowości w celu dalszej optymalizacji działania kodu
+- zrównoleglij wykonanie obliczeń wykorzystując i wybierz najbardziej opłacalną opcję
+  - a) pule wątków
+  - b) mechanizm fork join
+  - c) zrównoleglanie strumieni
+- dodaj możliwość wstawiania nowych danych do pliku, wykorzystaj różne strategie synchronizacji w celu zapewnienia
+  odpowiedniej wydajności i bezpieczeństwa, wybierz najbardziej opłacalny wariant
+- dodaj raport dotyczący całkowitej sprzedaży oraz zaimplementuj cache optymalizujący odczyt poszczególnych stron
+  z pliku, cache powinien być resetowany po zmianie danych
 
 Uwaga na tym etapie dozwolona jest dowolna implementacja rozwiązania, ale istnieją pewne ograniczenia:
 - nie wolno korzystać z zewnętrznych bibliotek ani frameworków

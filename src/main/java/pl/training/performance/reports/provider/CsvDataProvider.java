@@ -1,40 +1,33 @@
-package pl.training.performance.repoprts.old;
+package pl.training.performance.reports.provider;
 
-import pl.training.performance.repoprts.*;
+import pl.training.performance.reports.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
-import static pl.training.performance.repoprts.OrderPriority.*;
+import static pl.training.performance.reports.OrderPriority.*;
 
-// 1
 public class CsvDataProvider implements DataProvider {
 
     private static final String FIELD_SEPARATOR = ",";
     private static final String ONLINE_MARKER = "Online";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy");
 
-    private List<DataEntry> dataEntries;
+    private final Path filePath;
+    private final double totalEntries;
 
     public CsvDataProvider(Path filePath) {
-        try {
-            loadData(filePath);
+        this.filePath = filePath;
+        try (var lines = Files.lines(filePath)) {
+            totalEntries = lines.skip(1).count();
         } catch (IOException ioException) {
             throw new DataLoadingFailedException();
         }
-    }
-
-    private void loadData(Path filePath) throws IOException {
-        dataEntries = Files.readAllLines(filePath)
-                .stream()
-                .skip(1)
-                .map(this::toDataEntry)
-                .toList();
     }
 
     private DataEntry toDataEntry(String row) {
@@ -58,18 +51,30 @@ public class CsvDataProvider implements DataProvider {
         var totalRevenue = new BigDecimal(fields[11]);
         var totalCost = new BigDecimal(fields[12]);
         var totalProfit = new BigDecimal(fields[13]);
-        return new DataEntry(region, country, itemType, isOnlineSaleChannel, orderPriority, orderDate, orderId, shipDate, unitsSold, unitPrice, unitCost, totalRevenue,
-                totalCost, totalProfit);
+        return new DataEntry(region, country, itemType, isOnlineSaleChannel, orderPriority, orderDate, orderId, shipDate,
+                unitsSold, unitPrice, unitCost, totalRevenue, totalCost, totalProfit);
     }
 
     @Override
     public ResultPage<DataEntry> findAll(PageSpec pageSpec) {
-        var rows = dataEntries.stream()
-                .skip(pageSpec.getOffset())
-                .limit(pageSpec.pageSize())
-                .toList();
-        var totalPages = (int) Math.ceil((double) dataEntries.size() / pageSpec.pageSize());
-        return new ResultPage<>(rows, totalPages);
+        try {
+            Files.lines(filePath).skip(pageSpec.getOffset())
+                    .forEach(string -> System.out.println(string.getBytes(StandardCharsets.UTF_8).length));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try (var lines = Files.lines(filePath)) {
+            var rows = lines.skip(1)
+                    .skip(pageSpec.getOffset())
+                    .limit(pageSpec.pageSize())
+                    .map(this::toDataEntry)
+                    .toList();
+            var totalPages = (int) Math.ceil(totalEntries / pageSpec.pageSize());
+            return new ResultPage<>(rows, totalPages);
+        } catch (IOException ioException) {
+            throw new DataLoadingFailedException();
+        }
     }
 
 }

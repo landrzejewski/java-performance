@@ -1,9 +1,10 @@
-package pl.training.performance.repoprts;
+package pl.training.performance.reports;
 
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import pl.training.performance.reports.provider.RandomAccessDataProvider;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -16,17 +17,15 @@ public class ReportsTest {
 
     private static final Path FILE_PATH = Path.of("sales.data");
 
-    // cache
-
     //@Benchmark
     public ResultPage<DataEntry> dataLoad() {
-        var dataProvider = new CsvDataProvider(FILE_PATH);
+        var dataProvider = new RandomAccessDataProvider(FILE_PATH);
         return dataProvider.findAll(new PageSpec(0, 500_000));
     }
 
     @Benchmark
     public List<ProductStats> dataLoadAndReporting() {
-        var dataProvider = new CsvDataProvider(FILE_PATH);
+        var dataProvider = new RandomAccessDataProvider(FILE_PATH);
         var reportGenerator = new ReportGenerator(dataProvider);
         return reportGenerator.generateProductsRanging(2012);
     }

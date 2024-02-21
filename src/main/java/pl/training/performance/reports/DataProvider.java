@@ -1,4 +1,4 @@
-package pl.training.performance.repoprts;
+package pl.training.performance.reports;
 
 public interface DataProvider {
 

@@ -1,28 +1,23 @@
-package pl.training.performance.repoprts;
+package pl.training.performance.reports.provider;
 
 import lombok.SneakyThrows;
+import pl.training.performance.reports.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.math.BigDecimal;
-import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static pl.training.performance.repoprts.OrderPriority.*;
+import static java.util.Arrays.copyOfRange;
+import static pl.training.performance.reports.OrderPriority.*;
 
-public class CsvDataProvider implements DataProvider {
+public class RandomAccessDataProvider implements DataProvider {
 
-    private static final int START_POSITION = 0;
-    private static final byte EMPTY_VALUE = 0x0;
+    /*private static final int START_POSITION = 0;
+    private static final byte EMPTY_VALUE = 0x0;*/
     private static final int RECORD_SIZE = 200;
 
     private static final String FIELD_SEPARATOR = ",";
@@ -30,11 +25,13 @@ public class CsvDataProvider implements DataProvider {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy");
 
     private final RandomAccessFile randomAccessFile;
+    private final long recordsCount;
 
-    public CsvDataProvider(Path filePath) {
+    public RandomAccessDataProvider(Path filePath) {
         try {
             this.randomAccessFile = new RandomAccessFile(filePath.toFile(), "rw");
-        } catch (FileNotFoundException e) {
+            recordsCount = randomAccessFile.length() / RECORD_SIZE;
+        } catch (IOException e) {
             throw new DataLoadingFailedException();
         }
         /*try (var lines = Files.lines(filePath).skip(1)) {
@@ -45,7 +42,7 @@ public class CsvDataProvider implements DataProvider {
         }*/
     }
 
-    @SneakyThrows
+    /*@SneakyThrows
     private void write(long lineNo, String line) {
         var buffer = ByteBuffer.allocate(RECORD_SIZE);
         buffer.put(toField(line.trim().getBytes(), RECORD_SIZE));
@@ -64,7 +61,7 @@ public class CsvDataProvider implements DataProvider {
         System.arraycopy(data, START_POSITION, bytes, START_POSITION, data.length);
         Arrays.fill(bytes, data.length, size, EMPTY_VALUE);
         return bytes;
-    }
+    }*/
 
     private DataEntry toDataEntry(String row) {
         var fields = row.split(FIELD_SEPARATOR);
@@ -95,31 +92,33 @@ public class CsvDataProvider implements DataProvider {
     @Override
     public ResultPage<DataEntry> findAll(PageSpec pageSpec) {
         var rows = new ArrayList<DataEntry>(pageSpec.pageSize());
-        var offset = (long) pageSpec.getOffset() * RECORD_SIZE;
-        //var bytes = new byte[RECORD_SIZE * pageSpec.pageSize()];
+
+        /*
+        var fileOffset = (long) pageSpec.getOffset() * RECORD_SIZE;
         var bytes = new byte[RECORD_SIZE];
         for (int recordNo = 0; recordNo < pageSpec.pageSize(); recordNo++) {
-            randomAccessFile.seek(offset);
+            randomAccessFile.seek(fileOffset);
             randomAccessFile.read(bytes);
             var line = new String(bytes).trim();
-            if (line.isEmpty()) {
-                break;
-            }
             var entry = toDataEntry(line);
             rows.add(entry);
-            offset += RECORD_SIZE;
+            fileOffset += RECORD_SIZE;
         }
-       /* for (int recordNo = 0; recordNo < pageSpec.pageSize(); recordNo++) {
+        */
+
+        var bytesCount = pageSpec.pageSize() * RECORD_SIZE;
+        var bytes = new byte[bytesCount];
+        randomAccessFile.seek(bytesCount);
+        randomAccessFile.read(bytes);
+        for (int recordNo = 0; recordNo < pageSpec.pageSize(); recordNo++) {
             var recordOffset = RECORD_SIZE * recordNo;
-            var lineBytes = Arrays.copyOfRange(bytes, recordOffset, recordOffset + RECORD_SIZE);
+            var lineBytes = copyOfRange(bytes, recordOffset, recordOffset + RECORD_SIZE);
             var line = new String(lineBytes).trim();
-            if (line.isEmpty()) {
-                break;
-            }
             var entry = toDataEntry(line);
             rows.add(entry);
-        }*/
-        var totalPages = (int) Math.ceil((double) randomAccessFile.length() / pageSpec.pageSize());
+        }
+
+        var totalPages = (int) Math.ceil((double) recordsCount / pageSpec.pageSize());
         return new ResultPage<>(rows, totalPages);
     }
 

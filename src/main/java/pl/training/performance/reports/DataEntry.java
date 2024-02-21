@@ -1,4 +1,4 @@
-package pl.training.performance.repoprts;
+package pl.training.performance.reports;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
