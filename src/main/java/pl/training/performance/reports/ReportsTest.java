@@ -4,6 +4,7 @@ import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import pl.training.performance.reports.provider.EagerCsvDataProvider;
 import pl.training.performance.reports.provider.RandomAccessDataProvider;
 import pl.training.performance.reports.provider.SynchronizedDataProvider;
 
@@ -28,6 +29,7 @@ public class ReportsTest {
     @Setup(Level.Iteration)
     public void setup() {
         var randomAccessDataProvider = new RandomAccessDataProvider(FILE_PATH);
+        //var eagerDataProvider = new EagerCsvDataProvider(Path.of("5m Sales Records.csv"));
         dataProvider = new SynchronizedDataProvider(randomAccessDataProvider);
         reportGenerator = new ReportGenerator(dataProvider);
     }
@@ -37,18 +39,18 @@ public class ReportsTest {
         dataProvider.close();
     }
 
-    //@Benchmark
+    // @Benchmark
     public ResultPage<DataEntry> dataLoad() {
         return dataProvider.findAll(new PageSpec(0, 500_000));
     }
 
-    // @Benchmark
+    @Benchmark
     public List<ProductStats> dataLoadAndReporting() {
         return new CacheableReportGenerator(reportGenerator)
                 .generateProductsRanging(2012);
     }
 
-    @Benchmark
+    // @Benchmark
     public void addRecord() {
         var entry = new DataEntry("X", "X", "X", true, MEDIUM, LocalDate.now(), 999,
                 LocalDate.now(), 2, TEN, TEN, TEN, TEN, TEN);
