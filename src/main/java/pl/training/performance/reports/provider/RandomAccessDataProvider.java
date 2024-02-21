@@ -34,7 +34,7 @@ public class RandomAccessDataProvider implements DataProvider {
         } catch (IOException e) {
             throw new DataLoadingFailedException();
         }
-        /*try (var lines = Files.lines(filePath).skip(1)) {
+        /*try (var lines = Files.lines("5m Sales Records.csv").skip(1)) {
             this.randomAccessFile = new RandomAccessFile(new File("sales.data"), "rw");
             lines.forEach(withCounter(this::write));
         } catch (IOException e) {

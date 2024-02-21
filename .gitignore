@@ -34,5 +34,4 @@ build/
 ### Mac OS ###
 .DS_Store
 
-/5m Sales Records.csv
 /*.data
