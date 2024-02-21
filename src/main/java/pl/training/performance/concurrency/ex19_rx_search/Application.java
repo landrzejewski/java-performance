@@ -16,6 +16,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static io.reactivex.Observable.zip;
 
@@ -79,23 +80,15 @@ public class Application {
         Runtime.getRuntime()
                 .addShutdownHook(new Thread(compositeDisposable::dispose));
 
-       /* var stream = githubService.getRepositories("java")
-                .flatMap(Observable::fromIterable)
-                .map(Repository::getName)
-                .map(String::toLowerCase)
-                .filter(hasLength(16))
-                .sorted()
-                .distinct();*/
-
-        /*var stream = ObservableReader.from(System.in)
+        var subscription = ObservableReader.from(System.in)
                 .debounce(5, TimeUnit.SECONDS)
                 .flatMap(this::sendQueries)
                 .flatMap(Observable::fromIterable)
                 .map(String::toLowerCase)
-                .filter(hasLength(16));*/
+                .filter(hasLength(1))
+                .subscribe(System.out::println, System.out::println, () -> System.out.println("Completed"));
 
-        //  var disposable = stream.subscribe(System.out::println, System.out::println, () -> System.out.println("Completed"));
-        //  compositeDisposable.add(disposable);
+        compositeDisposable.add(subscription);
     }
 
     public static void main(String[] args) throws InterruptedException {
