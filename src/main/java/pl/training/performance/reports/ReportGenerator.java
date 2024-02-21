@@ -47,4 +47,8 @@ public class ReportGenerator {
                 .collect(Collectors.groupingBy(DataEntry::itemType, mapping(DataEntry::totalProfit, reducing(ZERO, BigDecimal::add))));
     }
 
+    public DataProvider getProvider() {
+        return provider;
+    }
+
 }

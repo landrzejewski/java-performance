@@ -12,4 +12,13 @@ public interface DataProvider {
         throw new UnsupportedOperationException();
     }
 
+    default void setDelegate(DataChangeDelegate dataChangeDelegate) {
+    }
+
+    interface DataChangeDelegate {
+
+        void dataChanged();
+
+    }
+
 }

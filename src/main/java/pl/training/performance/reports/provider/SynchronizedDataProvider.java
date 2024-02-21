@@ -48,4 +48,9 @@ public class SynchronizedDataProvider implements DataProvider, AutoCloseable {
         }
     }
 
+    @Override
+    public void setDelegate(DataChangeDelegate dataChangeDelegate) {
+        dataProvider.setDelegate(dataChangeDelegate);
+    }
+
 }

@@ -1,7 +1,10 @@
 package pl.training.performance.reports.provider;
 
 import lombok.SneakyThrows;
-import pl.training.performance.reports.*;
+import pl.training.performance.reports.DataEntry;
+import pl.training.performance.reports.DataLoadingFailedException;
+import pl.training.performance.reports.PageSpec;
+import pl.training.performance.reports.ResultPage;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -10,14 +13,18 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static java.util.Arrays.copyOfRange;
+import static java.util.stream.Collectors.joining;
 import static pl.training.performance.reports.OrderPriority.*;
 
 public class RandomAccessDataProvider implements DataProvider, AutoCloseable {
-    /*private static final int START_POSITION = 0;
-    private static final byte EMPTY_VALUE = 0x0;*/
+
+    private static final int START_POSITION = 0;
+    private static final byte EMPTY_VALUE = 0x0;
     private static final int RECORD_SIZE = 200;
 
     private static final String FIELD_SEPARATOR = ",";
@@ -27,6 +34,8 @@ public class RandomAccessDataProvider implements DataProvider, AutoCloseable {
     private final RandomAccessFile randomAccessFile;
     private final long recordsCount;
     private final Logger logger = Logger.getLogger(RandomAccessDataProvider.class.getSimpleName());
+
+    private DataChangeDelegate dataChangeDelegate = () -> {};
 
     public RandomAccessDataProvider(Path filePath) {
         try {
@@ -56,13 +65,14 @@ public class RandomAccessDataProvider implements DataProvider, AutoCloseable {
         var counter = new AtomicLong(0);
         return item -> consumer.accept(counter.getAndIncrement(), item);
     }
+    */
 
     private byte[] toField(byte[] data, int size) {
         var bytes = new byte[size];
         System.arraycopy(data, START_POSITION, bytes, START_POSITION, data.length);
         Arrays.fill(bytes, data.length, size, EMPTY_VALUE);
         return bytes;
-    }*/
+    }
 
     private DataEntry toDataEntry(String row) {
         var fields = row.split(FIELD_SEPARATOR);
@@ -124,6 +134,42 @@ public class RandomAccessDataProvider implements DataProvider, AutoCloseable {
     }
 
     @Override
+    public void add(DataEntry dataEntry) {
+        var dataBytes = List.<String>of(
+                        dataEntry.region(),
+                        dataEntry.country(),
+                        dataEntry.itemType(),
+                        dataEntry.isOnlineSaleChannel() ? "Online" : "Offline",
+                        switch (dataEntry.orderPriority()) {
+                            case CRITICAL -> "C";
+                            case HIGH -> "H";
+                            case MEDIUM -> "M";
+                            default -> "L";
+                        },
+                        dataEntry.orderDate().format(DATE_TIME_FORMATTER),
+                        "" + dataEntry.orderId(),
+                        dataEntry.shipDate().format(DATE_TIME_FORMATTER),
+                        "" + dataEntry.unitsSold(),
+                        dataEntry.unitPrice().toString(),
+                        dataEntry.unitCost().toString(),
+                        dataEntry.totalRevenue().toString(),
+                        dataEntry.totalCost().toString(),
+                        dataEntry.totalProfit().toString()
+                )
+                .stream()
+                .collect(joining(FIELD_SEPARATOR))
+                .getBytes();
+        var bytes = toField(dataBytes, RECORD_SIZE);
+        try {
+            randomAccessFile.seek(randomAccessFile.length());
+            randomAccessFile.write(bytes);
+            dataChangeDelegate.dataChanged();
+        } catch (IOException ioException) {
+            logger.warning("Record save failed");
+        }
+    }
+
+    @Override
     public void close() {
         try {
             randomAccessFile.close();
@@ -132,4 +178,8 @@ public class RandomAccessDataProvider implements DataProvider, AutoCloseable {
         }
     }
 
+    @Override
+    public void setDelegate(DataChangeDelegate dataChangeDelegate) {
+        this.dataChangeDelegate = dataChangeDelegate;
+    }
 }

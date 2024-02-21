@@ -4,14 +4,15 @@ import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import pl.training.performance.reports.provider.DataProvider;
 import pl.training.performance.reports.provider.RandomAccessDataProvider;
 import pl.training.performance.reports.provider.SynchronizedDataProvider;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.List;
+
+import static java.math.BigDecimal.TEN;
+import static pl.training.performance.reports.OrderPriority.MEDIUM;
 
 @Warmup(iterations = 0)
 @Measurement(iterations = 1, batchSize = 1)
@@ -41,9 +42,18 @@ public class ReportsTest {
         return dataProvider.findAll(new PageSpec(0, 500_000));
     }
 
-    @Benchmark
+    // @Benchmark
     public List<ProductStats> dataLoadAndReporting() {
-        return reportGenerator.generateProductsRanging(2012);
+        return new CacheableReportGenerator(reportGenerator)
+                .generateProductsRanging(2012);
+    }
+
+    @Benchmark
+    public void addRecord() {
+        var entry = new DataEntry("X", "X", "X", true, MEDIUM, LocalDate.now(), 999,
+                LocalDate.now(), 2, TEN, TEN, TEN, TEN, TEN);
+        var cacheableGenerator = new CacheableReportGenerator(reportGenerator);
+        dataProvider.add(entry);
     }
 
     public static void main(String[] args) throws RunnerException {
@@ -62,8 +72,7 @@ public class ReportsTest {
 ReportsTest.dataLoad                ss       13,340           s/op
 ReportsTest.dataLoad                ss       1,498            s/op
 
-
 ReportsTest.dataLoadAndReporting    ss       16,408           s/op  (pageSize 50 -> 1_000_000)
 ReportsTest.dataLoadAndReporting    ss       8,234            s/op  RandomAccess (full block)
-ReportsTest.dataLoadAndReporting    ss       10,320           s/op  SynchronizedDataProvider
+ReportsTest.dataLoadAndReporting    ss       8,827            s/op  SynchronizedDataProvider + LinkedHashMapCache
  */

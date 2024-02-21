@@ -12,7 +12,8 @@ public class Application {
         try (var dataProvider = new RandomAccessDataProvider(filePath)) {
             var synchronizedDataProvider = new SynchronizedDataProvider(dataProvider);
             var reportGenerator = new ReportGenerator(synchronizedDataProvider);
-            reportGenerator.generateProductsRanging(2012)
+            var cacheableReportGenerator = new CacheableReportGenerator(reportGenerator);
+            cacheableReportGenerator.generateProductsRanging(2012)
                     .forEach(System.out::println);
         }
     }
