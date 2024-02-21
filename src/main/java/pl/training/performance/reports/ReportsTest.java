@@ -52,8 +52,8 @@ public class ReportsTest {
 
     // @Benchmark
     public void addRecord() {
-        var entry = new DataEntry("X", "X", "X", true, MEDIUM, LocalDate.now(), 999,
-                LocalDate.now(), 2, TEN, TEN, TEN, TEN, TEN);
+        var entry = new DataEntry("X", "X", "X", true, MEDIUM,
+                LocalDate.now(), 999, LocalDate.now(), 2, TEN, TEN, TEN, TEN, TEN);
         var cacheableGenerator = new CacheableReportGenerator(reportGenerator);
         dataProvider.add(entry);
     }
