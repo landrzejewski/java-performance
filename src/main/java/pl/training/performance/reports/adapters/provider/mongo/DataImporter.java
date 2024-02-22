@@ -11,7 +11,7 @@ import pl.training.performance.reports.domain.PageSpec;
 import java.nio.file.Path;
 
 @Transactional
-// @Component
+@Component
 @RequiredArgsConstructor
 public class DataImporter implements ApplicationRunner {
 
@@ -27,7 +27,7 @@ public class DataImporter implements ApplicationRunner {
         for (int page = 0; page < totalPages; page++) {
             provider.findAll(new PageSpec(page, pageSize))
                     .getRows()
-                    .forEach(provider::add);
+                    .forEach(mongoProvider::add);
             System.out.println("Page %s of %s imported".formatted(page + 1, totalPages));
         }
     }

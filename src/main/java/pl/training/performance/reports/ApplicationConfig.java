@@ -14,7 +14,7 @@ import pl.training.performance.reports.ports.DataProvider;
 public class ApplicationConfig {
 
     @Bean
-    public ReportGenerator reportGenerator(@Qualifier("jdbcTemplateProvider") DataProvider dataProvider) {
+    public ReportGenerator reportGenerator(@Qualifier("springDataMongoAdapter") DataProvider dataProvider) {
         return new ReportGenerator(dataProvider);
     }
 

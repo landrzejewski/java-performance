@@ -18,7 +18,7 @@ import java.util.UUID;
 public class DataEntryDocument {
 
     @Id
-    private UUID id;
+    private String id;
     private long orderId;
     private String region;
     private String country;

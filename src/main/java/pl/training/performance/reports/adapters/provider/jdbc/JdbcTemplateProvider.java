@@ -24,6 +24,11 @@ public class JdbcTemplateProvider implements DataProvider {
     private static final String SELECT_ALL = "select * from entries e offset :offset limit :limit";
     private static final String SELECT_COUNT_ALL = "select count(e.id) from entries e";
 
+    // select item_type, sum(total_profit) from entries where order_date > to_date('2012-01-01', 'yyyy-MM-dd') and order_date < to_date('2013-01-01', 'yyyy-MM-dd') group by item_type;
+    /*
+    create index item_type on entries (item_type);
+    create index item_type on entries (order_date);
+     */
     /*private static final String SELECT_COUNT_ALL = "select count(e.id) from entries e where e.order_date > :after and e.order_date < :before";
     private static final String SELECT_ALL = "select * from entries e where e.order_date > :after and e.order_date < :before offset :offset limit :limit";*/
 
