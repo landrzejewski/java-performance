@@ -23,10 +23,11 @@ public class DataImporter implements ApplicationRunner {
     private EntityManager entityManager;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         int pageSize = 10_000;
         int totalPages = (int) Math.ceil((double) 5_000_000 / pageSize);
         var provider = new EagerCsvDataProvider(Path.of("5m Sales Records.csv"));
+        System.out.println("Importing...");
         for (int page = 0; page < totalPages; page++) {
             provider.findAll(new PageSpec(page, pageSize))
                     .getRows()
@@ -35,7 +36,7 @@ public class DataImporter implements ApplicationRunner {
                     .forEach(entity -> entityManager.persist(entity));
             entityManager.flush();
             entityManager.clear();
-            System.out.println("Page %d of %d imported (%d records)".formatted(page, totalPages));
+            System.out.println("Page %s of %s imported".formatted(page + 1, totalPages));
         }
     }
 

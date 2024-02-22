@@ -8,6 +8,7 @@ import pl.training.performance.reports.domain.OrderPriority;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static pl.training.performance.reports.adapters.provider.jpa.DataEntryEntity.FIND_BY_ITEM_TYPE;
 
@@ -22,6 +23,7 @@ public class DataEntryEntity {
     public static final String FIND_BY_ITEM_TYPE = "DataEntry.FIND_BY_ITEM_TYPE";
 
     @Id
+    private UUID id = UUID.randomUUID();
     private long orderId;
     @Column(length = 40)
     private String region;
