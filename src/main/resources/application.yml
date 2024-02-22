@@ -2,15 +2,12 @@ spring:
   datasource:
     username: admin
     password: admin
-    url: jdbc:postgresql://localhost:5432/reports
+    url: jdbc:postgresql://postgres:5432/reports
     driver-class-name: org.postgresql.Driver
   jpa:
     generate-ddl: true
-  data:
-    mongodb:
-      username: admin
-      password: admin
-      host: localhost
-      port: 27017
-      authentication-database: admin
-      database: reports
+
+# Total time: 195815ms
+# Start time:  4.315s
+
+# ./mvnw -Pnative spring-boot:build-image
