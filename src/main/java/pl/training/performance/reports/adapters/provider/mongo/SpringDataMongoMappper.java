@@ -4,6 +4,7 @@ import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
+import pl.training.performance.reports.adapters.provider.jpa.DataEntryEntity;
 import pl.training.performance.reports.domain.DataEntry;
 import pl.training.performance.reports.domain.ResultPage;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface SpringDataMongoMappper {
 
-    DataEntry toDomain(DataEntryDocument dataEntryDocument);
+    DataEntryEntity toDomain(DataEntryDocument dataEntryDocument);
 
     @IterableMapping(elementTargetType = DataEntry.class)
     List<DataEntry> toDomain(List<DataEntryDocument> dataEntryDocuments);

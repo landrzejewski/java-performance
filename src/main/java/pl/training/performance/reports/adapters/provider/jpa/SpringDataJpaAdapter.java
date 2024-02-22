@@ -8,6 +8,8 @@ import pl.training.performance.reports.domain.PageSpec;
 import pl.training.performance.reports.domain.ResultPage;
 import pl.training.performance.reports.ports.DataProvider;
 
+import java.time.LocalDate;
+
 @Repository
 @RequiredArgsConstructor
 public class SpringDataJpaAdapter implements DataProvider {
@@ -19,7 +21,11 @@ public class SpringDataJpaAdapter implements DataProvider {
     @Override
     public ResultPage<DataEntry> findAll(PageSpec pageSpec) {
         var pageRequest = PageRequest.of(pageSpec.pageNumber(), pageSpec.pageSize());
-        var page = dataProvider.findAll(pageRequest);
+        //var page = dataProvider.findAll(pageRequest);
+        var page = dataProvider.findByOrderDateAfterAndOrderDateBefore(
+                LocalDate.of(2012, 1, 1),
+                LocalDate.of(2013, 1, 1),
+                pageRequest);
         return dataMapper.toDomain(page);
     }
 
