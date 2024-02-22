@@ -1,21 +1,13 @@
 package pl.training.performance.reports;
 
-import pl.training.performance.reports.provider.RandomAccessDataProvider;
-import pl.training.performance.reports.provider.SynchronizedDataProvider;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.nio.file.Path;
-
+@SpringBootApplication
 public class Application {
 
     public static void main(String[] args) {
-        var filePath = Path.of("sales.data");
-        try (var dataProvider = new RandomAccessDataProvider(filePath)) {
-            var synchronizedDataProvider = new SynchronizedDataProvider(dataProvider);
-            var reportGenerator = new ReportGenerator(synchronizedDataProvider);
-            var cacheableReportGenerator = new CacheableReportGenerator(reportGenerator);
-            cacheableReportGenerator.generateProductsRanging(2012)
-                    .forEach(System.out::println);
-        }
+        SpringApplication.run(Application.class, args);
     }
 
 }
