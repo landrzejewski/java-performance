@@ -1,6 +1,5 @@
 package pl.training.performance.reports;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -14,7 +13,7 @@ import pl.training.performance.reports.ports.DataProvider;
 public class ApplicationConfig {
 
     @Bean
-    public ReportGenerator reportGenerator(@Qualifier("springDataMongoAdapter") DataProvider dataProvider) {
+    public ReportGenerator reportGenerator(DataProvider dataProvider) {
         return new ReportGenerator(dataProvider);
     }
 
