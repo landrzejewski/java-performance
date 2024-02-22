@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import static pl.training.performance.reports.adapters.provider.jpa.DataEntryEntity.FIND_BY_ITEM_TYPE;
 
 @NamedQuery(name = FIND_BY_ITEM_TYPE, query = "select de from DataEntry de where itemType = :itemType")
-@Table(name = "entries", indexes = @Index(name = "DataEntry_itemType", columnList = "itemType"))
+@Table(name = "entries") //, indexes = @Index(name = "DataEntry_itemType", columnList = "itemType"))
 @Entity(name = "DataEntry")
 @Getter
 @Setter
@@ -23,11 +23,11 @@ public class DataEntryEntity {
 
     @Id
     private long orderId;
-    @Column(length = 20)
+    @Column(length = 40)
     private String region;
-    @Column(length = 15)
+    @Column(length = 40)
     private String country;
-    @Column(length = 20)
+    @Column(length = 40)
     private String itemType;
     private boolean isOnlineSaleChannel;
     @Enumerated(EnumType.ORDINAL)
