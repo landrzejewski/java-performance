@@ -3,16 +3,11 @@ package pl.training.performance.reports.adapters.provider.jpa;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import pl.training.performance.reports.domain.DataEntry;
 import pl.training.performance.reports.domain.PageSpec;
 import pl.training.performance.reports.domain.ResultPage;
 import pl.training.performance.reports.ports.DataProvider;
 
-import static org.springframework.transaction.annotation.Propagation.MANDATORY;
-
-@Transactional(propagation = MANDATORY)
 @Repository
 @RequiredArgsConstructor
 public class SpringDataJpaAdapter implements DataProvider {
