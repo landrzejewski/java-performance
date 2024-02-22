@@ -1,6 +1,6 @@
-package pl.training.performance.reports;
+package pl.training.performance.reports.domain;
 
-import pl.training.performance.reports.provider.DataProvider;
+import pl.training.performance.reports.ports.DataProvider;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

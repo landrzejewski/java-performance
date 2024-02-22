@@ -1,9 +1,8 @@
-package pl.training.performance.reports;
+package pl.training.performance.reports.domain;
 
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.RecursiveTask;
-import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
 import static java.util.stream.Collectors.*;

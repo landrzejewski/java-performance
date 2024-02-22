@@ -1,8 +1,9 @@
-package pl.training.performance.reports.provider;
+package pl.training.performance.reports.adapters.provider.fs;
 
-import pl.training.performance.reports.DataEntry;
-import pl.training.performance.reports.PageSpec;
-import pl.training.performance.reports.ResultPage;
+import pl.training.performance.reports.domain.DataEntry;
+import pl.training.performance.reports.domain.PageSpec;
+import pl.training.performance.reports.domain.ResultPage;
+import pl.training.performance.reports.ports.DataProvider;
 
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;

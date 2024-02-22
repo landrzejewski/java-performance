@@ -1,10 +1,11 @@
-package pl.training.performance.reports.provider;
+package pl.training.performance.reports.adapters.provider.fs;
 
 import lombok.SneakyThrows;
-import pl.training.performance.reports.DataEntry;
-import pl.training.performance.reports.DataLoadingFailedException;
-import pl.training.performance.reports.PageSpec;
-import pl.training.performance.reports.ResultPage;
+import pl.training.performance.reports.domain.DataEntry;
+import pl.training.performance.reports.domain.DataLoadingFailedException;
+import pl.training.performance.reports.domain.PageSpec;
+import pl.training.performance.reports.domain.ResultPage;
+import pl.training.performance.reports.ports.DataProvider;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -19,7 +20,7 @@ import java.util.logging.Logger;
 
 import static java.util.Arrays.copyOfRange;
 import static java.util.stream.Collectors.joining;
-import static pl.training.performance.reports.OrderPriority.*;
+import static pl.training.performance.reports.domain.OrderPriority.*;
 
 public class RandomAccessDataProvider implements DataProvider, AutoCloseable {
 

@@ -1,4 +1,4 @@
-package pl.training.performance.reports;
+package pl.training.performance.reports.domain;
 
 import java.util.List;
 

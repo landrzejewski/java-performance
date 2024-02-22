@@ -1,6 +1,7 @@
-package pl.training.performance.reports;
+package pl.training.performance.reports.common;
 
-import pl.training.performance.reports.provider.DataProvider;
+import pl.training.performance.reports.domain.ProductStats;
+import pl.training.performance.reports.domain.ReportGenerator;
 
 import java.util.List;
 

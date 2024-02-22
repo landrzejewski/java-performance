@@ -1,4 +1,4 @@
-package pl.training.performance.reports;
+package pl.training.performance.reports.domain;
 
 public record PageSpec(int pageNumber, int pageSize) {
 
