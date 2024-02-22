@@ -14,12 +14,18 @@ import pl.training.performance.reports.ports.DataProvider;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 @Repository
 public class JdbcTemplateProvider implements DataProvider {
 
     private static final String INSERT_ENTRY = "insert into entries (id, order_id, region, country, item_type, is_online_sale_channel, order_priority, order_date, ship_date, units_sold, unit_price, unit_cost, total_revenue, total_cost, total_profit) values (:id, :orderId, :region, :country, :itemType, :isOnlineSaleChannel, :orderPriority, :orderDate, :shipDate, :unitsSold, :unitPrice, :unitCost, :totalRevenue, :totalCost, :totalProfit)";
-    private static final String SELECT_ALL = "select * from entries offset :offset limit :limit";
+
+    private static final String SELECT_ALL = "select * from entries e offset :offset limit :limit";
+    private static final String SELECT_COUNT_ALL = "select count(e.id) from entries e";
+
+    /*private static final String SELECT_COUNT_ALL = "select count(e.id) from entries e where e.order_date > :after and e.order_date < :before";
+    private static final String SELECT_ALL = "select * from entries e where e.order_date > :after and e.order_date < :before offset :offset limit :limit";*/
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final EntryRowMapper rowMapper = new EntryRowMapper();
@@ -58,8 +64,11 @@ public class JdbcTemplateProvider implements DataProvider {
         var parameters = new MapSqlParameterSource()
                 .addValue("offset", pageSpec.getOffset())
                 .addValue("limit", pageSpec.pageSize());
+                /*.addValue("after", LocalDate.of(2012, 1, 1))
+                .addValue("before", LocalDate.of(2013, 1, 1));*/
         var rows = jdbcTemplate.query(SELECT_ALL, parameters, rowMapper);
-        int totalPages = (int) Math.ceil((double) 5_000_000 / pageSpec.pageSize());
+        int totalPages = (int) Math.ceil((double) jdbcTemplate.queryForObject(SELECT_COUNT_ALL, parameters, Integer.class)
+                / pageSpec.pageSize());
         return new ResultPage<>(rows, totalPages);
     }
 

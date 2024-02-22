@@ -21,11 +21,11 @@ public class SpringDataJpaAdapter implements DataProvider {
     @Override
     public ResultPage<DataEntry> findAll(PageSpec pageSpec) {
         var pageRequest = PageRequest.of(pageSpec.pageNumber(), pageSpec.pageSize());
-        //var page = dataProvider.findAll(pageRequest);
-        var page = dataProvider.findByOrderDateAfterAndOrderDateBefore(
+        var page = dataProvider.findAll(pageRequest);
+        /*var page = dataProvider.findByOrderDateAfterAndOrderDateBefore(
                 LocalDate.of(2012, 1, 1),
                 LocalDate.of(2013, 1, 1),
-                pageRequest);
+                pageRequest);*/
         return dataMapper.toDomain(page);
     }
 
