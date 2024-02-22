@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-//@Repository
+@Repository
 public class JdbcTemplateProvider implements DataProvider {
 
     private static final String INSERT_ENTRY = "insert into entries (id, order_id, region, country, item_type, is_online_sale_channel, order_priority, order_date, ship_date, units_sold, unit_price, unit_cost, total_revenue, total_cost, total_profit) values (:id, :orderId, :region, :country, :itemType, :isOnlineSaleChannel, :orderPriority, :orderDate, :shipDate, :unitsSold, :unitPrice, :unitCost, :totalRevenue, :totalCost, :totalProfit)";
