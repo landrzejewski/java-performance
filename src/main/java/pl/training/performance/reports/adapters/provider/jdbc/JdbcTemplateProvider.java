@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import pl.training.performance.reports.domain.DataEntry;
+import pl.training.performance.reports.domain.OrderPriority;
 import pl.training.performance.reports.domain.PageSpec;
 import pl.training.performance.reports.domain.ResultPage;
 import pl.training.performance.reports.ports.DataProvider;
@@ -30,10 +31,24 @@ public class JdbcTemplateProvider implements DataProvider {
 
     private static class EntryRowMapper implements RowMapper<DataEntry> {
 
-
         @Override
         public DataEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return null;
+            return new DataEntry(
+                    rs.getString("region"),
+                    rs.getString("country"),
+                    rs.getString("item_type"),
+                    rs.getBoolean("is_online_sale_channel"),
+                    OrderPriority.values()[rs.getInt("order_priority")],
+                    rs.getDate("order_date").toLocalDate(),
+                    rs.getLong("order_id"),
+                    rs.getDate("ship_date").toLocalDate(),
+                    rs.getInt("units_sold"),
+                    rs.getBigDecimal("unit_price"),
+                    rs.getBigDecimal("unit_cost"),
+                    rs.getBigDecimal("total_revenue"),
+                    rs.getBigDecimal("total_cost"),
+                    rs.getBigDecimal("total_profit")
+            );
         }
 
     }

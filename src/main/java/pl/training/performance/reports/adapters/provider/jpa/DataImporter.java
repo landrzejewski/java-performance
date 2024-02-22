@@ -13,7 +13,7 @@ import pl.training.performance.reports.domain.PageSpec;
 import java.nio.file.Path;
 
 @Transactional
-@Component
+// @Component
 @RequiredArgsConstructor
 public class DataImporter implements ApplicationRunner {
 
