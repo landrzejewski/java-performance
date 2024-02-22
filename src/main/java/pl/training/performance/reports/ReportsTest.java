@@ -4,7 +4,6 @@ import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import pl.training.performance.reports.provider.EagerCsvDataProvider;
 import pl.training.performance.reports.provider.RandomAccessDataProvider;
 import pl.training.performance.reports.provider.SynchronizedDataProvider;
 
