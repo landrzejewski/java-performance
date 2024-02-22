@@ -17,6 +17,5 @@ public record DataEntry(
         BigDecimal unitCost,
         BigDecimal totalRevenue,
         BigDecimal totalCost,
-        BigDecimal totalProfit
-) {
+        BigDecimal totalProfit) {
 }
