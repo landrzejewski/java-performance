@@ -7,7 +7,7 @@ spring:
   jpa:
     generate-ddl: true
 
-# Total time: 195815ms
-# Start time:  4.315s
+# Total time: 195815ms vs 328280ms
+# Start time:  4.315s vs 0.414s
 
 # ./mvnw -Pnative spring-boot:build-image
