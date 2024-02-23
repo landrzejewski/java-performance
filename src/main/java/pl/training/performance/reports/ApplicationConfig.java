@@ -3,8 +3,18 @@ package pl.training.performance.reports;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.server.RequestPredicates;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.RouterFunctions;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import pl.training.performance.reports.adapters.rest.RestHandler;
 import pl.training.performance.reports.domain.ReportGenerator;
 import pl.training.performance.reports.ports.DataProvider;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 
 @EnableReactiveMongoRepositories
 @Configuration
@@ -13,6 +23,12 @@ public class ApplicationConfig {
     @Bean
     public ReportGenerator reportGenerator(DataProvider dataProvider) {
         return new ReportGenerator(dataProvider);
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> routes(RestHandler restHandler) {
+        return RouterFunctions
+                .route(GET("api/uuids").and(accept(APPLICATION_JSON)), restHandler::test);
     }
 
 }
