@@ -22,11 +22,15 @@ public class Application implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         var startTime = System.currentTimeMillis();
-        var result = reportGenerator.generateProductsRanging(2012);
-        var formatter = new DecimalFormat("###,###,###");
-        var time = System.currentTimeMillis() - startTime;
-        System.out.println("Total time: %sms".formatted(formatter.format(time)));
-        result.forEach(System.out::println);
+        reportGenerator.generateProductsRanging(2012)
+                .subscribe(
+                        System.out::println,
+                        System.out::println,
+                        () -> {
+                            var formatter = new DecimalFormat("###,###,###");
+                            var time = System.currentTimeMillis() - startTime;
+                            System.out.println("Total time: %sms".formatted(formatter.format(time)));
+                        });
     }
 
 }
