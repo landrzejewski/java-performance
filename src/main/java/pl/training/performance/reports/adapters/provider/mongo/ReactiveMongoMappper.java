@@ -10,7 +10,7 @@ import pl.training.performance.reports.domain.ResultPage;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface ReactiveSpringDataMongoMappper {
+public interface ReactiveMongoMappper {
 
     DataEntry toDomain(DataEntryDocument dataEntryDocument);
 

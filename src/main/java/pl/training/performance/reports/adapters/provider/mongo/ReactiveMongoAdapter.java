@@ -13,10 +13,10 @@ import static reactor.core.publisher.Mono.just;
 
 @Repository
 @RequiredArgsConstructor
-public class SpringDataMongoAdapter implements DataProvider {
+public class ReactiveMongoAdapter implements DataProvider {
 
-    private final ReactiveSpringDataMongoProvider dataProvider;
-    private final ReactiveSpringDataMongoMappper dataMapper;
+    private final ReactiveMongoProvider dataProvider;
+    private final ReactiveMongoMappper dataMapper;
 
     private final Sinks.Many<DataChangedEvent> events = Sinks.many().multicast().directBestEffort();
 
