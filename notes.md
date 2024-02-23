@@ -16,17 +16,17 @@ Wykorzystaj więdzę z zakresu wielowątkowości w celu dalszej optymalizacji dz
   - d) RxJava
 - dodaj możliwość wstawiania nowych danych do pliku, wykorzystaj różne strategie synchronizacji w celu zapewnienia
   odpowiedniej wydajności i bezpieczeństwa, wybierz najbardziej opłacalny wariant (monitor, blokady jawne)
-- dodaj raport dotyczący całkowitej sprzedaży oraz zaimplementuj cache optymalizujący odczyt poszczególnych stron
-  z pliku, cache powinien być resetowany po zmianie danych
+
+- dodaj raport dotyczący całkowitej sprzedaży (dowolna wariacja jdbc templates/jpa/mongo/reactive mongo)
+Logikę generowania raportu (filtrowanie, grupowanie) wykonaj na poziomie bazy. Wystaw funkcjonalność generowania raportu
+w postaci REST. Zbadaj wydajność bazową, a następnie stosując optymalizacje na różnych poziomach, 
+postaraj się jak najbardziej poprawić rezultaty (zapisz wyniki pośrednie z informacją o wprowadzonych zmianach) 
+
 
 Uwaga na tym etapie dozwolona jest dowolna implementacja rozwiązania, ale istnieją pewne ograniczenia:
 - nie wolno korzystać z zewnętrznych bibliotek ani frameworków
 - aplikacja jest jednowątkowa
 - nie dostarczamy UI, a jedynie api/metody 
 - należy umożliwić wymianę implementacji dotyczącej odczytu surowych danych oraz zapisu/odczytu danych wygenerowanych (interfejsy)
-
-Po zaimplementowaniu pierwszej wersji rozwiązania należy zmierzyć wydajność / napisać testy z wykorzystaniem JMH i zapisać je np. na
-poziomie Google Excel. 
-Po wykonaniu testów wstępnych należy spróbować zoptymalizować istniejącą aplikację, wykorzystując napisane testy oraz profiler.
 
 https://excelbianalytics.com/wp/downloads-18-sample-csv-files-data-sets-for-testing-sales
