@@ -1,24 +1,15 @@
 package pl.training.performance.reports.ports;
 
 import pl.training.performance.reports.domain.DataEntry;
-import pl.training.performance.reports.domain.PageSpec;
-import pl.training.performance.reports.domain.ResultPage;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface DataProvider {
 
-    ResultPage<DataEntry> findAll(PageSpec pageSpec);
+    Flux<DataEntry> findAll();
 
-    default void add(DataEntry dataEntry) {
-        throw new UnsupportedOperationException();
-    }
+    Mono<DataEntry> add(DataEntry dataEntry);
 
-    default void setDelegate(DataChangeDelegate dataChangeDelegate) {
-    }
-
-    interface DataChangeDelegate {
-
-        void dataChanged();
-
-    }
+    Flux<DataChangedEvent> changeEvents();
 
 }

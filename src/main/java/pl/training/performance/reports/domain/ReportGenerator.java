@@ -1,6 +1,7 @@
 package pl.training.performance.reports.domain;
 
 import pl.training.performance.reports.ports.DataProvider;
+import reactor.core.publisher.Flux;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,16 +17,16 @@ import static java.util.stream.Collectors.*;
 
 public class ReportGenerator {
 
-    private static final int PAGE_SIZE = 500_000;
-
     private final DataProvider provider;
-    private final ForkJoinPool processingPool = commonPool();
-
     public ReportGenerator(DataProvider provider) {
         this.provider = provider;
     }
 
-    public List<ProductStats> generateProductsRanging(int year) {
+    public Flux<ProductStats> generateProductsRanging(int year) {
+        return provider.findAll()
+                .
+
+
         var resultPage = provider.findAll(new PageSpec(0, PAGE_SIZE));
         var totalPages = resultPage.getTotalPages();
 
@@ -62,10 +63,6 @@ public class ReportGenerator {
                 .stream()
                 .filter(dataEntry -> dataEntry.orderDate().getYear() == year)
                 .collect(groupingBy(DataEntry::itemType, mapping(DataEntry::totalProfit, reducing(ZERO, BigDecimal::add))));
-    }
-
-    public DataProvider getProvider() {
-        return provider;
     }
 
 }

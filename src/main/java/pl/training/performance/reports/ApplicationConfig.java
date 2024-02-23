@@ -5,9 +5,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import pl.training.performance.reports.domain.ReportGenerator;
 import pl.training.performance.reports.ports.DataProvider;
 
+@EnableReactiveMongoRepositories
 @EnableMongoRepositories
 @EnableJpaRepositories
 @Configuration

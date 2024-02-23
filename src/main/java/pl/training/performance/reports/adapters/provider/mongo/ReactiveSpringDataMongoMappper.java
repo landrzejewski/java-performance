@@ -1,4 +1,4 @@
-package pl.training.performance.reports.adapters.provider.jpa;
+package pl.training.performance.reports.adapters.provider.mongo;
 
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
@@ -10,16 +10,16 @@ import pl.training.performance.reports.domain.ResultPage;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface SpringDataJpaMappper {
+public interface ReactiveSpringDataMongoMappper {
 
-    DataEntry toDomain(DataEntryEntity dataEntryEntity);
+    DataEntry toDomain(DataEntryDocument dataEntryDocument);
 
     @IterableMapping(elementTargetType = DataEntry.class)
-    List<DataEntry> toDomain(List<DataEntryEntity> dataEntryEntities);
+    List<DataEntry> toDomain(List<DataEntryDocument> dataEntryDocuments);
 
     @Mapping(source = "content", target = "rows")
-    ResultPage<DataEntry> toDomain(Page<DataEntryEntity> dataEntryEntities);
+    ResultPage<DataEntry> toDomain(Page<DataEntryDocument> dataEntryDocuments);
 
-    DataEntryEntity toEntity(DataEntry dataEntry);
+    DataEntryDocument toDocument(DataEntry dataEntry);
 
 }

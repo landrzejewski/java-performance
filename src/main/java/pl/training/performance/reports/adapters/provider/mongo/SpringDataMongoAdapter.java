@@ -1,41 +1,47 @@
 package pl.training.performance.reports.adapters.provider.mongo;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import pl.training.performance.reports.domain.DataEntry;
-import pl.training.performance.reports.domain.PageSpec;
-import pl.training.performance.reports.domain.ResultPage;
+import pl.training.performance.reports.ports.DataChangedEvent;
 import pl.training.performance.reports.ports.DataProvider;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
 
-import static org.springframework.transaction.annotation.Propagation.MANDATORY;
+import static reactor.core.publisher.Mono.just;
 
 @Repository
 @RequiredArgsConstructor
 public class SpringDataMongoAdapter implements DataProvider {
 
-    private final SpringDataMongoProvider dataProvider;
-    private final SpringDataMongoMappper dataMapper;
-    private DataChangeDelegate dataChangeDelegate = () -> {};
+    private final ReactiveSpringDataMongoProvider dataProvider;
+    private final ReactiveSpringDataMongoMappper dataMapper;
+
+    private final Sinks.Many<DataChangedEvent> events = Sinks.many().multicast().directBestEffort();
 
     @Override
-    public ResultPage<DataEntry> findAll(PageSpec pageSpec) {
-        var pageRequest = PageRequest.of(pageSpec.pageNumber(), pageSpec.pageSize());
-        var page = dataProvider.findAll(pageRequest);
-        return dataMapper.toDomain(page);
+    public Flux<DataEntry> findAll() {
+        return dataProvider.findAll()
+                .map(dataMapper::toDomain);
     }
 
     @Override
-    public void add(DataEntry dataEntry) {
-       var entity = dataMapper.toDocument(dataEntry);
-       dataProvider.save(entity);
-       dataChangeDelegate.dataChanged();
+    public Mono<DataEntry> add(DataEntry dataEntry) {
+        return just(dataEntry)
+                .map(dataMapper::toDocument)
+                .flatMap(dataProvider::save)
+                .map(dataMapper::toDomain)
+                .doOnNext(this::sendDataChangeEvent);
+    }
+
+    private void sendDataChangeEvent(DataEntry dataEntry) {
+        events.tryEmitNext(new DataChangedEvent(dataEntry));
     }
 
     @Override
-    public void setDelegate(DataChangeDelegate dataChangeDelegate) {
-        this.dataChangeDelegate = dataChangeDelegate;
+    public Flux<DataChangedEvent> changeEvents() {
+        return events.asFlux();
     }
 
 }
