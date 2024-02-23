@@ -9,6 +9,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 
+import java.time.LocalDate;
+
 import static reactor.core.publisher.Mono.just;
 
 @Repository
@@ -22,7 +24,9 @@ public class ReactiveMongoAdapter implements DataProvider {
 
     @Override
     public Flux<DataEntry> findAll() {
-        return dataProvider.findAll()
+        return dataProvider
+                //.findAll()
+                .findByYear(LocalDate.of(2012, 1, 1), LocalDate.of(2013,1 ,1 ))
                 .map(dataMapper::toDomain);
     }
 

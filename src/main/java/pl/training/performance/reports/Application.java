@@ -34,3 +34,8 @@ public class Application implements ApplicationRunner {
     }
 
 }
+
+
+// Total time: 155 874ms p
+// Total time: 153 543ms
+// Total time: 25 468ms

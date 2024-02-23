@@ -28,10 +28,14 @@ public class ReportGenerator {
 
     public Flux<ProductStats> generateProductsRanging(int year) {
         return provider.findAll()
+                /*.parallel()
                 .filter(byYear(year))
+                .sequential()*/
                 .collect(groupingBy(DataEntry::itemType, mapping(DataEntry::totalProfit, reducing(ZERO, BigDecimal::add))))
                 .flatMapMany(map -> fromIterable(map.entrySet()))
+                .parallel()
                 .map(this::toProductStats)
+                .sequential()
                 .sort();
     }
 
